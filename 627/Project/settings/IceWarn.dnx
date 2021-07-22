@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>3941740810</Checksum>
+        <Checksum>3429599677</Checksum>
     </DebugChecksum>
     <CodeCoverage>
         <Enabled>_ 0</Enabled>
@@ -124,15 +124,6 @@
         <ShowTimeSum>1</ShowTimeSum>
         <SumSortOrder>0</SumSortOrder>
     </EventLog>
-    <DisassembleMode>
-        <mode>0</mode>
-    </DisassembleMode>
-    <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.647.11" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.664.11" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.672.7" 0 0 1 "" 0 "" 0</Bp2>
-        <Count>3</Count>
-    </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -142,13 +133,6 @@
         <LogFile>_ ""</LogFile>
         <Category>_ 0</Category>
     </LogFile>
-    <Aliases>
-        <A0>_ "F:\团队项目\AI模组\IceWarn-master_421\FreeRTOSV10.0.0\Source\tasks.c" ""</A0>
-        <A1>_ "F:\团队项目\AI模组\IceWarn-master_421\Lib\Src\stm32f4xx_hal_rcc.c" ""</A1>
-        <A2>_ "F:\团队项目\AI模组\IceWarn-master_421\User\main.c" ""</A2>
-        <Count>3</Count>
-        <SuppressDialog>0</SuppressDialog>
-    </Aliases>
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>1</Mode>
@@ -167,4 +151,20 @@
         <Probe0>I0</Probe0>
         <ProbeSetup0>2 1 1 2 0 0</ProbeSetup0>
     </PowerProbe>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.647.11" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.664.11" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.672.7" 0 0 1 "" 0 "" 0</Bp2>
+        <Count>3</Count>
+    </Breakpoints2>
+    <Aliases>
+        <A0>_ "F:\团队项目\AI模组\IceWarn-master_421\FreeRTOSV10.0.0\Source\tasks.c" ""</A0>
+        <A1>_ "F:\团队项目\AI模组\IceWarn-master_421\Lib\Src\stm32f4xx_hal_rcc.c" ""</A1>
+        <A2>_ "F:\团队项目\AI模组\IceWarn-master_421\User\main.c" ""</A2>
+        <Count>3</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
 </settings>

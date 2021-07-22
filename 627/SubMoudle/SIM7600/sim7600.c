@@ -219,8 +219,8 @@ uint8_t Gsm_Connect_Server(uint8_t *ip ,uint32_t port)
 	}
     //Gsm_AT_SELF((uint8_t *)"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n");
     
-       // Gsm_AT_SELF((uint8_t *)"AT+CREG?\r\n");
-    // Gsm_AT_SELF((uint8_t *)"AT+COPS?\r\n");
+        Gsm_AT_SELF((uint8_t *)"AT+CREG?\r\n");
+     Gsm_AT_SELF((uint8_t *)"AT+COPS?\r\n");
 #ifdef CJY_DEBUG
     printf("ATE0\n");
 #endif
@@ -246,7 +246,7 @@ uint8_t Gsm_Connect_Server(uint8_t *ip ,uint32_t port)
 	printf("AT+CIPMODE=0\n");	
 #endif		
 	
-    if(Gsm_Stask_Spoint((uint8_t *)"cmnet"))
+    if(Gsm_Stask_Spoint((uint8_t *)"ctnet"))
 	{
 	    return CONNECT_ERR_CSTT;
 	} 

@@ -316,7 +316,7 @@ static void __unpk(void** obuff,uint8_t *ibuff,QueMsg *msg)
         pMsgSend->subtype = GP_SET_SYS_ON;
         pMsgSend->src = Get_Self_Id();
         pMsgSend->sn = gc_msg.sn;
-        pMsgSend->data[0] = (gc_msg.Control.type == "on")?2:1;
+        pMsgSend->data[0] = strcmp(gc_msg.Control.type,"on")?0:1;
         SysControlflush(pMsgSend->data[0]);
         //保持开关等策略
     }

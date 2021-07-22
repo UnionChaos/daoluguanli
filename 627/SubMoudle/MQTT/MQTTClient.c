@@ -359,7 +359,7 @@ exit:
 #ifdef CJY_DEBUG
         printf("mqtt cycle exit!\n");
 #endif
-        MQTTCloseSession(c);
+        //MQTTCloseSession(c);
     }
 
     return rc;

@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\团队项目\高速公路\beifen\627\Project\settings\IceWarn.Debug.general.xcl" --backend -f "F:\团队项目\高速公路\beifen\627\Project\settings\IceWarn.Debug.driver.xcl" 
+& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --backend -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
 }
 else
 {
-& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\团队项目\高速公路\beifen\627\Project\settings\IceWarn.Debug.general.xcl" --debug_file=$debugfile --backend -f "F:\团队项目\高速公路\beifen\627\Project\settings\IceWarn.Debug.driver.xcl" 
+& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --debug_file=$debugfile --backend -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
 }

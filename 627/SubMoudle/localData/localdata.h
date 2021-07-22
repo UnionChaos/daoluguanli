@@ -50,7 +50,6 @@ void Strategypush(Strategy_t *stg);
 void Strategyflush();
 
 void Loginpull();
-
 void SysControlflush(uint8_t on);
 
 extern uint16_t Get_Gw_Vol(void);

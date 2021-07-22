@@ -121,8 +121,8 @@ static Mode_t mode = {
 };//模式配置
 static Strategy_t strategy = {
     .eph = {"off"},
-    .online = {"1805"},
-    .offline = {"0705"},
+    .online = {"2005"},
+    .offline = {"0505"},
 };
 static uint8_t point_mode = 0;
 static uint64_t strategy_online_ts;
@@ -134,8 +134,8 @@ static unsigned char self_uid[16];
 static uint64_t self_ts;
 static uint16_t self_vol;
 
-uint32_t rain_now;
-uint32_t foggy_now;
+uint32_t rain_now = 0;
+uint32_t foggy_now = 0;
 
 
 ChipID chipid = {0};
@@ -394,8 +394,8 @@ double Get_Gps_at(void)
 //*GPS信息查询
 //***********************************************************************************/
 extern     SemaphoreHandle_t  xSemaphore_local;
-static uint32_t notice_cnt = 0;
-static uint32_t rmc_cnt = 0;
+//static uint32_t notice_cnt = 0;
+//static uint32_t rmc_cnt = 0;
 void vTaskCodeGps( void * pvParameters )
 {
   uint8_t cnt = 0;
@@ -418,6 +418,9 @@ void vTaskCodeGps( void * pvParameters )
   //取消VTG
   sprintf(buf,"$CFGMSG,%d,%d,%d\r",0,5,0);
   UART8_Tx((uint8_t*)buf,14);
+  
+  sprintf(buf,"$CFGMSG,%d,%d,%d\r",6,0,0);
+  UART8_Tx((uint8_t*)buf,14);
   HAL_NVIC_EnableIRQ(UART8_IRQn);
   
   while(1)
@@ -428,12 +431,10 @@ void vTaskCodeGps( void * pvParameters )
                continue;
             if(NULL == strstr(buf,"RMC"))
             {
-                notice_cnt++;
                 continue;
             }
             else
             {
-                rmc_cnt++;
                 char *pToken = NULL;
                 char *pDelimiter = ":,";
                 char h[3];
@@ -802,6 +803,7 @@ void ModReport()
     //vTaskDelay(pdMS_TO_TICKS(4000));
 }
 
+
 void SysControl(uint8_t on)
 {
     int i = 0;
@@ -897,7 +899,8 @@ void vTaskCodeLocal( void * pvParameters )
    /*localInfo.se[0].start = 141;
     localInfo.se[0].end = 280;
     localInfo.se[1].start = 281;
-    localInfo.se[1].end = 420; */
+    localInfo.se[1].end = 420; 
+    //self_id = 0x80000002; */
     LocalDataflush();
     LocalDataPull();
     //最好等待MQTT初始化完成

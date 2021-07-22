@@ -223,7 +223,6 @@
                     <state>STM32F429xx</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>MQTT_TASK</state>
-                    <state>CJY_DEBUG</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
