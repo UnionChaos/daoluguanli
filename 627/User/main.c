@@ -19,7 +19,6 @@
 //4G  物联网卡
 //GPS NOTICE
 
-
 #define QUE_LENTH       64
 
 

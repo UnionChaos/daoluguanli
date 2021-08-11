@@ -74,22 +74,19 @@ void vTaskCodeGPRS( void * pvParameters )
     gprs_NewNetwork(&gprs_network,1);
     MQTTClientInit(&gprsclient, &gprs_network, 10000,sendbuf, sizeof(sendbuf), readbuf, sizeof(readbuf));
 
-  //char address[] = "176.122.148.79";
+    char address[] = "47.98.103.98";
         
-	char address[] = "116.62.38.211";//36013
-    //Gsm_Gps_Open();
-    //Gsm_Gps_IsOpen();
-        //uint8_t a[32];
-      // rc = Gsm_Gps_Info(a,32);
+	//char address[] = "116.62.38.211";//36013
+
 
     while(1)
     {
         vTaskDelay(pdMS_TO_TICKS(100));
-        if ((rc = gprs_ConnectNetwork(&gprs_network, (char*)address, 36013)) != 0)
+        if ((rc = gprs_ConnectNetwork(&gprs_network, (char*)address, 1883)) != 0)
         {
             gprs_connect_failed++;
 #ifdef CJY_DEBUG
-            printf("gprs connect fail , try again! ip = %s , port = 36013\n",address);
+            printf("gprs connect fail , try again! ip = %s , port = 1883\n",address);
 #endif
             if(gprs_connect_failed >= FAILED_NUM_MAX)
                 system_restart();
@@ -99,7 +96,7 @@ void vTaskCodeGPRS( void * pvParameters )
             break;          
     }
 #ifdef CJY_DEBUG
-    printf("gprs connect success! ip = %s , port = 36013\n",address);
+    printf("gprs connect success! ip = %s , port = 1883\n",address);
 #endif
 
 #if defined(MQTT_TASK)

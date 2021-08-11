@@ -85,18 +85,18 @@ static void USART_Init(void)
 
 
 
-    /**USART6 GPIO Configuration    
-    PC6     ------> USART6_TX
-    PC7     ------> USART6_RX 
+    /**USART7 GPIO Configuration    
+    PE8     ------> UART7_RX
+    PE7     ------> UART7_TX 
     */
-   /* GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+    GPIO_InitStruct.Pin = GPIO_PIN_7 | GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
+    GPIO_InitStruct.Alternate = GPIO_AF8_UART7;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
         
-    huart2.Instance = USART6;
+    huart2.Instance = UART7;
     huart2.Init.BaudRate = 115200;
     huart2.Init.WordLength = UART_WORDLENGTH_8B;
     huart2.Init.StopBits = UART_STOPBITS_1;
@@ -105,10 +105,11 @@ static void USART_Init(void)
     huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     huart2.Init.OverSampling = UART_OVERSAMPLING_16;
     HAL_UART_Init(&huart2);
+    //能见度仪用主动召测的形式
+    /*__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+    HAL_NVIC_SetPriority(UART7_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(UART7_IRQn);*/
     
-    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
-    HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART6_IRQn);*/
 }
 
 static void TIM_Init(void)
@@ -314,20 +315,16 @@ void UART4_Tx(uint8_t* buf,uint16_t size)
     HAL_UART_Transmit(&huart1, buf, size, 1000);
 }
 
-/*void USART1_Tx(uint8_t* buf,uint16_t size)
+void UART7_Tx(uint8_t* buf,uint16_t size)
 {
-    HAL_UART_Transmit(&huart2, buf, size, (size + 9)/10);
+    HAL_UART_Transmit(&huart2, buf, size, 1000);
 }
-void USART1_ClearBuf(void)
+
+void UART7_Rx(uint8_t* buf,uint16_t size)
 {
-    memset(rx_buf1,0,sizeof(rx_buf1));
-    rx_index1 = 0;
+    HAL_UART_Receive(&huart3, buf, size, 1000);
 }
-void UART8_Tx(uint8_t* buf,uint16_t size)
-{
-    HAL_UART_Transmit(&huart3, buf, size, (size + 9)/10);
-}
-*/
+
 
 
 

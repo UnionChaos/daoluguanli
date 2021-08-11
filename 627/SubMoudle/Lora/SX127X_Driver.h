@@ -697,6 +697,10 @@ extern S_LoRaPara G_LoRaPara;
 extern float G_BandWidthKHz;//计算Symbol周期使用
 extern float G_TsXms;//Symbol周期，单位ms
 
+extern S_LoRaConfig G_LoRaConfig_2;
+extern S_LoRaPara G_LoRaPara_2;
+extern float G_BandWidthKHz_2;//计算Symbol周期使用
+extern float G_TsXms_2;//Symbol周期，单位ms
 /***********************************************FSK****************************************************/
 #define REG_FSK_FIFO                                 0x00 
 // Common settings
@@ -1015,6 +1019,42 @@ void LSD_RF_ClearFIFO(void);
 void LSD_RF_SendPacket_FSK(uint8_t *txBuffer, uint8_t size);
 void LSD_RF_RXmode_FSK(void);
 void LSD_RF_RxPacket_FSK(uint8_t *cRxBuf, uint8_t *cLength);
+
+//*****************************************************************************************
+
+
+
+/*******************************************FSK End*********************************************************************/
+
+void SX127X_2_Reset(void);
+void SX127X_2_InitIo(void);
+void SX127X_2WriteRxTx( bool txEnable );
+void DIO0_2_EnableInterrupt(void);
+void DIO0_2_DisableInterrupt(void);
+GPIO_PinState DIO0_2_GetState(void);
+bool LoRaConfig_2_Check(void);
+tSX127xError SX127X_2_Lora_init(void);
+void SX127X_2_TxPacket(uint8_t*data);
+void SX127X_2_TxPacket_cjy(uint8_t*data,uint8_t lenth);
+void SX127X_2_StartRx(void);
+int16_t SX127X_2_Current_RSSI(void);
+void SX127X_2_RxPacket(uint8_t*cbuf);
+uint8_t SX127X_2_RxPacket_cjy(uint8_t*cbuf);
+void SX127X_2_SleepMode(void);
+void SX127X_2_StandbyMode(void);
+tSX127xError SX127X_2_FreqSet(void);
+tSX127xError SX127X_2_PoutSet(void);
+void SX127X_2_Write( uint8_t addr, uint8_t data );
+void SX127X_2_Read( uint8_t addr, uint8_t *data );
+void SX127X_2_WriteFifo( uint8_t *buffer, uint8_t size );
+void SX127X_2_ReadFifo( uint8_t *buffer, uint8_t size );
+
+void SX127X_2_CADinit(void);
+void SX127X_2_WORInit(void);
+void SX127X_2_CAD_Sample(void);
+void SX127X_2_WOR_Execute(uint8_t cclen);
+void SX127X_2_WOR_Exit(void);
+void SX127X_2_Awake(uint8_t*cbuf, uint16_t Preamble_Length);
 
 //*****************************************************************************************
 #endif

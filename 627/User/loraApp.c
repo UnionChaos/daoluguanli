@@ -52,6 +52,29 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             SX127X_StartRx();
         }
     }
+
+    if(DIO0_2_GetState() == GPIO_PIN_SET)
+    {
+        
+        uint8_t flag2;
+        SX127X_2_Read(REG_LR_IRQFLAGS, &flag2);
+        SX127X_2_Write(REG_LR_IRQFLAGS, 0xff); //clear flags
+        if(flag2 & RFLR_IRQFLAGS_TXDONE)
+        {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xSemaphoreGiveFromISR(xSemaphore_Lora2_tx,&xHigherPriorityTaskWoken);
+        }
+        else if(flag2 & RFLR_IRQFLAGS_RXDONE)
+        {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xSemaphoreGiveFromISR(xSemaphore_Lora2_rx,&xHigherPriorityTaskWoken);
+
+        }
+        else
+        {
+            SX127X_2_StartRx();
+        }
+    }
      //taskEXIT_CRITICAL();
 }
 
@@ -73,6 +96,23 @@ static void Lora_WRInit(void)
     }
 }
 
+static void Lora2_WRInit(void)
+{
+
+    uint8_t wrInitRxBuffer[256];
+    lenn = 0;
+    while(1)
+    {
+        if(xSemaphoreTake( xSemaphore_Lora2_rx,0 ) != pdPASS)     //清除信号量
+            break;
+        lenn = SX127X_2_RxPacket_cjy(wrInitRxBuffer); 
+    }
+    while(1)
+    {
+        if(xSemaphoreTake( xSemaphore_Lora2_tx,0 ) != pdPASS)     //清除信号量
+            break;
+    }
+}
 //=============================================================
 //函 数 名: Lora_SendAndWait
 //输入参数: cmd      :发送的命令字符串
@@ -126,6 +166,22 @@ static uint8_t Lora_Send(uint8_t *cmd,uint8_t size,uint8_t trynum,uint32_t timeo
 		Lora_WRInit();        //清除缓冲区
 		SX127X_TxPacket_cjy(cmd,size);
         if(xSemaphoreTake( xSemaphore_Lora1_tx,timeout) == pdPASS)
+            break;
+	}
+    //Lora_WRInit();
+        
+	return 1; 
+}
+
+static uint8_t Lora2_Send(uint8_t *cmd,uint8_t size,uint8_t trynum,uint32_t timeout)
+{
+
+	for(int i = 0 ; i < trynum ; i++)
+	{
+        //尝试发送
+		Lora2_WRInit();        //清除缓冲区
+		SX127X_2_TxPacket_cjy(cmd,size);
+        if(xSemaphoreTake( xSemaphore_Lora2_tx,timeout) == pdPASS)
             break;
 	}
     //Lora_WRInit();
@@ -219,4 +275,24 @@ void vTaskLoraApp1( void * pvParameters )
 
     }
 }
-    
+void vTaskLoraApp2( void * pvParameters )
+{
+    (void)pvParameters;
+    BaseType_t xResult;
+    uint8_t lenth = 0;
+    uint8_t RxBuffer[256];
+    uint8_t TxBuffer[64];
+
+    uint8_t ret;
+    SX127X_2_Lora_init();
+    DIO0_2_EnableInterrupt();
+    //vTaskDelay(pdMS_TO_TICKS(7000));
+
+    while(1)
+    {
+        if(xSemaphoreTake( xSemaphore_Lora2_rx,(TickType_t)0xffffffffUL) == pdPASS)
+        {
+            //todo 解析
+        }
+    }
+}

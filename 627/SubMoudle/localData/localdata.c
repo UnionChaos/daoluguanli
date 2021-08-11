@@ -128,7 +128,7 @@ static uint8_t point_mode = 0;
 static uint64_t strategy_online_ts;
 static uint64_t strategy_offline_ts;
 
-static uint32_t self_id = 0x80000001;
+static uint32_t self_id = 0x80000002;
 static uint32_t self_sn = 0;
 static unsigned char self_uid[16];
 static uint64_t self_ts;
@@ -891,17 +891,17 @@ void vTaskCodeLocal( void * pvParameters )
 {
     Get_ChipID();
     sprintf(LogInfo.uid,"%s",self_uid);
-    localInfo.se[0].start = 1;
+    /*localInfo.se[0].start = 1;
     localInfo.se[0].end = 140;
     localInfo.se[1].start = 421;
-    localInfo.se[1].end = 560;  
+    localInfo.se[1].end = 560;*/
     
-   /*localInfo.se[0].start = 141;
+  /* localInfo.se[0].start = 141;
     localInfo.se[0].end = 280;
     localInfo.se[1].start = 281;
-    localInfo.se[1].end = 420; 
-    //self_id = 0x80000002; */
-    LocalDataflush();
+    localInfo.se[1].end = 420; */
+    //self_id = 0x80000002; 
+    //LocalDataflush();
     LocalDataPull();
     //最好等待MQTT初始化完成
     /*while(1)
