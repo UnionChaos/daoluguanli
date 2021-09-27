@@ -104,7 +104,7 @@ typedef struct gp_msg
 #pragma pack()
 
 uint8_t GP_TxPacket(uint8_t* buff,uint8_t type,uint32_t src, uint32_t dst,void *param);
-uint8_t GP_RxPacket(uint8_t* buff,uint8_t type,uint32_t *src, uint32_t *dst,uint8_t lenth, void *out);
+uint8_t GP_RxPacket(uint8_t* buff,uint8_t type,uint8_t lenth, void *out);
 
 
 #ifdef __cplusplus

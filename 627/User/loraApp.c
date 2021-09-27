@@ -238,9 +238,9 @@ void vTaskLoraApp1( void * pvParameters )
                     lenth = Lora_SendAndWait(TxBuffer,lenth,RxBuffer,RETRY_NUM,2000,pMsg->subtype);
                     if(lenth>0)
                     {
-                        ret = GP_RxPacket(RxBuffer,pMsg->subtype,&pMsgSend->src,&pMsgSend->dst,lenth,&pstate);
+                        ret = GP_RxPacket(RxBuffer,pMsg->subtype,lenth,&pstate);
                         //解出pstate数据，并刷新到本地内存
-                        if(ret == 1)
+                        if(ret > 0)
                         {
                             PointStatePush((void *)&pstate);
                         }
@@ -282,17 +282,32 @@ void vTaskLoraApp2( void * pvParameters )
     uint8_t lenth = 0;
     uint8_t RxBuffer[256];
     uint8_t TxBuffer[64];
+    uin32_t Txsrc,Txdst;
 
     uint8_t ret;
     SX127X_2_Lora_init();
     DIO0_2_EnableInterrupt();
     //vTaskDelay(pdMS_TO_TICKS(7000));
-
+    SX127X_2_StartRx();
     while(1)
     {
+        memset(TxBuffer,0,64);
         if(xSemaphoreTake( xSemaphore_Lora2_rx,(TickType_t)0xffffffffUL) == pdPASS)
-        {
-            //todo 解析
+        {  
+            lenth = SX127X_2_RxPacket_cjy(RxBuffer);
+            uint32_t dst = RxBuffer[5]|RxBuffer[6]<<8|RxBuffer[7]<<16|RxBuffer[8]<<24;
+            if(dst == Get_Self_Id()|| dst == 0xffffffff)
+            {
+                ret = GP_RxPacket(RxBuffer,RxBuffer[11],TxBuffer);
+                if(ret == 0)
+                    continue;
+                if(TxBuffer[0] != 0)
+                {
+                    Lora_2_Send(TxBuffer,ret,3,2000);
+                    SX127X_2_StartRx();
+                }
+            }
+
         }
     }
 }

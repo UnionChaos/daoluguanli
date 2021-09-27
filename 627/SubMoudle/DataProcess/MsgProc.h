@@ -28,6 +28,14 @@ typedef enum sub_type
     GP_P_STAT,
     GP_BROADCAST_TIME,
 
+    GH_RESET = 0x41,
+    GH_QUERY_ID,
+    GH_SET_ID,
+    GH_SYNC,
+    GH_QUERY_LIST,
+    GH_SET_LIST,
+
+
     GC_G_STAT = 0x8f,
     GC_P_STAT,
     GC_CONFIG,

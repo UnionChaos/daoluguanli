@@ -26,6 +26,7 @@
 #define E2_STRATEGY_ADDR         576
 #define E2_LOCAL_ADDR            640
 #define E2_MODE_NOW_ADDR         672
+#define E2_ID_ADDR               704
 
 #define SYS_ON                   2
 #define SYS_OFF                  1
@@ -42,10 +43,7 @@ typedef struct{
     point_state_tiny p_state[300];
 }point_t;
 
-typedef struct{
-    uint16_t start;
-    uint16_t end;
-}point_se_t;
+
 typedef struct{
 
     uint64_t last_update;
@@ -214,6 +212,14 @@ uint8_t GetNowMode()
     return point_mode;
 }
 
+void Idpush(uint32_t id)
+{
+    self_id = id;
+}
+void Idflush()
+{
+    EEPROM_Write(E2_ID_ADDR,&self_id,sizeof(uint32_t));
+}
 void Configpull(Config_t *cfg)
 {
     memcpy(cfg,&config,sizeof(Config_t));
@@ -349,6 +355,21 @@ void NowModeflush()
     EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
 }
 
+void pointSEflush()
+{
+    //to do E2 xie
+    EEPROM_Write(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
+}
+
+void pointSEpull(point_se_t *se)
+{
+    memcpy(se,&localInfo.se,sizeof(point_se_t)*2);
+}
+void pointSEpush(point_se_t *se)
+{
+    memcpy(&localInfo.se,se,sizeof(point_se_t)*2);
+}
+
 
 void LocalDataPull()
 {
@@ -359,17 +380,19 @@ void LocalDataPull()
     EEPROM_Read(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
     EEPROM_Read(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
     EEPROM_Read(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
+    EEPROM_Read(E2_ID_ADDR,&self_id,sizeof(uint32_t));
 }
 
 void LocalDataflush()
 {
   //to do E2 xie
-    //EEPROM_Write(E2_CONFIG_ADDR,&config,sizeof(Config_t));
-    //EEPROM_Write(E2_RF_ADDR,&rfstate[0],sizeof(RfState_t)*7);
-    //EEPROM_Write(E2_MODE_ADDR,&mode,sizeof(Mode_t));
-    //EEPROM_Write(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
+    EEPROM_Write(E2_CONFIG_ADDR,&config,sizeof(Config_t));
+    EEPROM_Write(E2_RF_ADDR,&rfstate[0],sizeof(RfState_t)*7);
+    EEPROM_Write(E2_MODE_ADDR,&mode,sizeof(Mode_t));
+    EEPROM_Write(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
     EEPROM_Write(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
-    //EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
+    EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
+    EEPROM_Read(E2_ID_ADDR,&self_id,sizeof(uint32_t));
 }
 
 ///***********************************************************************************
@@ -386,9 +409,48 @@ double Get_Gps_at(void)
 }
 
 
+///***********************************************************************************
+//*能见度仪信息查询
+//***********************************************************************************/
+extern SemaphoreHandle_t  xSemaphore_vision;
+void vTaskVision(void * pvParameters)
+{
+    uint8_t cnt = 0;
+    char buf[128];
+    //如果不是字符串 补成字符串，用于拆解
+    //也可以用固定方案 把字符换算成结果类似 4*1000+3*100....，不利于拓展
+    while(1)
+    {
+        if(xSemaphoreTake( xSemaphore_vision,(TickType_t)0xffffffffUL) == pdPASS)
+        {
+            if(UART8_Rx((uint8_t *)buf,128) == 0)
+               continue;
+            if(NULL != strstr(buf,"RMC"))
+               continue;
+                
+            char *pToken = NULL;
+            char *pDelimiter = " ";
+            char temp_foggy[6];
 
+            pToken = strtok((char *)buf,pDelimiter);
+            while(pToken)
+            {
+                pToken = strtok(NULL,pDelimiter);
+                switch(cnt)
+                {
+                case 4:
+                    memcpy(temp_foggy,pToken,5);
+                    temp_foggy[5] = '\0';
+                    foggy_now =atoi(temp_foggy);
+                default:
+                    break;
+                }
+                cnt++;
+            }
 
-
+        }
+    }
+}
 
 ///***********************************************************************************
 //*GPS信息查询
@@ -803,6 +865,28 @@ void ModReport()
     //vTaskDelay(pdMS_TO_TICKS(4000));
 }
 
+void SysControl_once(uint8_t on)
+{
+    int i = 0;
+    QueMsg * pMsgSend = NULL;
+
+    pMsgSend = pvPortMalloc(sizeof(QueMsg)+1);
+    pMsgSend->type = MSG_TYPE_LORA_STATE_QUERY_CONTROL;
+    pMsgSend->subtype = GP_SET_SYS_ON; 
+    pMsgSend->src = self_id;
+    pMsgSend->data[0] = on-1;
+    if( xQueueSend(Queue_Lora,(void *) &pMsgSend,(TickType_t)100) != pdPASS)
+    {
+    /* 发送失败，即使等待了100个时钟节拍 */
+        vPortFree(pMsgSend);
+    }
+    else
+    {
+    localInfo.syson = on;  
+    }
+    pMsgSend = NULL;
+      
+}
 
 void SysControl(uint8_t on)
 {

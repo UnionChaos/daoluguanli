@@ -21,9 +21,9 @@ static uint8_t rx_buf1[1024] = {0};
 static volatile uint16_t rx_index2 = 0;
 static uint8_t rx_buf2[512] = {0};
 
-/*
+
 static volatile uint16_t rx_index3 = 0;
-static uint8_t rx_buf3[512] = {0};*/
+static uint8_t rx_buf3[512] = {0};
 
 
 static void USART_Init(void)
@@ -97,7 +97,7 @@ static void USART_Init(void)
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
         
     huart2.Instance = UART7;
-    huart2.Init.BaudRate = 115200;
+    huart2.Init.BaudRate = 9600;
     huart2.Init.WordLength = UART_WORDLENGTH_8B;
     huart2.Init.StopBits = UART_STOPBITS_1;
     huart2.Init.Parity = UART_PARITY_NONE;
@@ -105,10 +105,10 @@ static void USART_Init(void)
     huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     huart2.Init.OverSampling = UART_OVERSAMPLING_16;
     HAL_UART_Init(&huart2);
-    //能见度仪用主动召测的形式
-    /*__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+    //能见度仪用被动召测的形式
+    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
     HAL_NVIC_SetPriority(UART7_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(UART7_IRQn);*/
+    HAL_NVIC_EnableIRQ(UART7_IRQn);
     
 }
 
@@ -150,6 +150,22 @@ void BSP_USART_Init(void)
 {
     USART_Init();  //初始化串口模块
     TIM_Init();
+}
+
+void UART7_IRQHandler(void)
+{
+    uint32_t tmp_flag = 0, tmp_it_source = 0;
+    tmp_flag = __HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE);
+	tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart3, UART_IT_RXNE);
+    if((tmp_flag != RESET) && (tmp_it_source != RESET))
+    {
+        rx_buf3[rx_index3++] = (uint8_t)(huart2.Instance->DR & (uint8_t)0x00FF);
+        if(rx_buf1[rx_index1-1] == '\r' )
+        {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xSemaphoreGiveFromISR(xSemaphore_local,&xHigherPriorityTaskWoken);
+        }
+    }
 }
 
 void UART8_IRQHandler(void)
@@ -272,7 +288,24 @@ uint16_t UART4_Rx(uint8_t* buf,uint16_t len)
     return ret;
 }
 
-
+void UART7_Rx(uint8_t* buf,uint16_t size)
+{
+    uint16_t ret = 0;
+    if(rx_index3 <= size)
+    {
+        memcpy(buf,rx_buf3,rx_index3);
+        ret = rx_index3;
+        rx_index3 = 0;       
+    }
+    else
+    {
+        memcpy(buf,rx_buf3,size);
+        ret = len;
+        rx_index3 -= len;
+        memcpy(rx_buf3,rx_buf3 + size,rx_index3);
+    }
+    return ret;
+}
 
 uint16_t UART8_Rx(uint8_t* buf,uint16_t len)
 {
@@ -300,15 +333,17 @@ void UART4_ClearBuf(void)
     rx_index2 = 0;
 }
 
-
-
-
 void UART8_ClearBuf(void)
 {
     memset(rx_buf1,0,sizeof(rx_buf1));
     rx_index1 = 0;
 }
 
+void UART7_ClearBuf(void)
+{
+    memset(rx_buf3,0,sizeof(rx_buf3));
+    rx_index2 = 0;
+}
 
 void UART4_Tx(uint8_t* buf,uint16_t size)
 {
@@ -319,13 +354,6 @@ void UART7_Tx(uint8_t* buf,uint16_t size)
 {
     HAL_UART_Transmit(&huart2, buf, size, 1000);
 }
-
-void UART7_Rx(uint8_t* buf,uint16_t size)
-{
-    HAL_UART_Receive(&huart3, buf, size, 1000);
-}
-
-
 
 
 void UART8_Tx(uint8_t* buf,uint16_t size)

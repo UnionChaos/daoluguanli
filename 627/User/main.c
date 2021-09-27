@@ -45,6 +45,7 @@ void vTaskLoraApp1( void * pvParameters );
 void vTaskMqttMsg( void * pvParameters );
 
 void vTaskCodeGps( void * pvParameters );
+void vTaskVision(void * pvParameters);
 /*UART2(4G串口)异步通知信号量*/
 SemaphoreHandle_t  xSemaphore_4G;  
 /*LORA接受结束标志*/
@@ -54,6 +55,7 @@ SemaphoreHandle_t  xSemaphore_Lora2_rx;
 SemaphoreHandle_t  xSemaphore_Lora1_tx;
 SemaphoreHandle_t  xSemaphore_Lora2_tx;
 SemaphoreHandle_t  xSemaphore_local;
+SemaphoreHandle_t  xSemaphore_vision;
 SemaphoreHandle_t  xSemaphore_barrier_local;
 
 /*Lora消息队列(发送给节点)

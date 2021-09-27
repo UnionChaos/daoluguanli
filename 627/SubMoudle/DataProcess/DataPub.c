@@ -30,6 +30,11 @@ uint8_t eth_choose()
 		return 0;
 }
 
+void hw_system_rest()
+{
+	__disable_irq();
+	HAL_NVIC_SystemReset();
+}
 
 static uint16_t publish_failed_cnt = 0;
 void Pub_Poll(void)

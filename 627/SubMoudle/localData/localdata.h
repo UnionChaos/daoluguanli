@@ -23,6 +23,19 @@ typedef struct{
     uint8_t ms;
 }gps_info_t;
 
+typedef struct{
+    uint16_t start;
+    uint16_t end;
+}point_se_t;
+
+
+void pointSEflush();
+void pointSEpull(point_se_t *se);
+void pointSEpush(point_se_t *se);
+
+void Idpush(uint32_t id);
+void Idflush();
+
 void ModeChange(uint8_t mode);
 uint8_t GetNowMode();
 void NowModeflush();
@@ -73,7 +86,7 @@ uint8_t Time_service(uint8_t choose,uint64_t now, uint64_t last);
 void ModeCmd(uint8_t cho);
 
 void SysControl(uint8_t on);
-  
+void SysControl_once(uint8_t on)
   
   
 ////AT
