@@ -364,12 +364,13 @@ void LocalDataPull()
 void LocalDataflush()
 {
   //to do E2 xie
-    //EEPROM_Write(E2_CONFIG_ADDR,&config,sizeof(Config_t));
-    //EEPROM_Write(E2_RF_ADDR,&rfstate[0],sizeof(RfState_t)*7);
-    //EEPROM_Write(E2_MODE_ADDR,&mode,sizeof(Mode_t));
-    //EEPROM_Write(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
+    EEPROM_Write(E2_CONFIG_ADDR,&config,sizeof(Config_t));
+    EEPROM_Write(E2_RF_ADDR,&rfstate[0],sizeof(RfState_t)*7);
+    EEPROM_Write(E2_MODE_ADDR,&mode,sizeof(Mode_t));
+    EEPROM_Write(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
     EEPROM_Write(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
-    //EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
+    EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
+    EEPROM_Write(E2_ID_ADDR,&self_id,sizeof(uint32_t));
 }
 
 ///***********************************************************************************
@@ -893,15 +894,16 @@ void vTaskCodeLocal( void * pvParameters )
     sprintf(LogInfo.uid,"%s",self_uid);
     localInfo.se[0].start = 1;
     localInfo.se[0].end = 140;
+    localInfo.se[1].start = 141;
+    localInfo.se[1].end = 280;
+    EEPROM_Write(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
+    EEPROM_Write(E2_ID_ADDR,&self_id,sizeof(uint32_t));
+  /* localInfo.se[0].start = 281;
+    localInfo.se[0].end = 420;
     localInfo.se[1].start = 421;
-    localInfo.se[1].end = 560;  
-    
-   /*localInfo.se[0].start = 141;
-    localInfo.se[0].end = 280;
-    localInfo.se[1].start = 281;
-    localInfo.se[1].end = 420; 
-    //self_id = 0x80000002; */
-    LocalDataflush();
+    localInfo.se[1].end = 560; */
+    //self_id = 0x80000002; 
+    //LocalDataflush();
     LocalDataPull();
     //最好等待MQTT初始化完成
     /*while(1)
@@ -1055,7 +1057,7 @@ void vTaskCodeLocal( void * pvParameters )
 
 
         
-        if(gps_info.hour == 24)
+        if(gps_info.hour == 23)
         {
             localInfo.doneflag = 0;
         }
