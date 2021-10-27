@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-10-25 09:03:15
+ * @LastEditTime: 2021-10-27 15:24:50
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \daoluguanli\627\SubMoudle\DataProcess\MsgProc.h
+ */
 #ifndef __MsgProc_H__
 #define __MsgProc_H__
 #include <stdint.h>
@@ -27,13 +35,16 @@ typedef enum sub_type
     GP_SET_MODE_SNAP,
     GP_P_STAT,
     GP_BROADCAST_TIME,
+    GP_RESET,
 
     GH_RESET = 0x41,
-    GH_QUERY_ID,
-    GH_SET_ID,
+    GH_RESET_POINT,
     GH_SYNC,
-    GH_QUERY_LIST,
+    GH_QUERY_HOST,
+    GH_SET_ID,
     GH_SET_LIST,
+    GH_POINT_SWTICH,
+    GH_MODE_SWITCH,
 
 
     GC_G_STAT = 0x8f,

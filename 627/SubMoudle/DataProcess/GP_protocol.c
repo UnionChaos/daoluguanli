@@ -128,29 +128,37 @@ static uint8_t __broadcast_time(uint8_t* buff,uint8_t type,void* param)
     memcpy(&buff[13],param,sizeof(gps_time));
     return attr.lenth;
 }
+static uint8_t __reset_all_points()
+{
+    return 0;
+}
 
 extern void hw_system_rest();
 static __gh_reset(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
-    //先判断终端需不需要复位
-    if(buff[13] = 0x00)
-    {
-        hw_system_rest();
-    }
-    else
-    {
-        SysControl_once(1);//先关
-        SysControl_once(2);//再开
-    }
+    hw_system_rest();
 }
 
-static __gh_query_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+extern Points_reset();
+static uint8_t __gh_reset_points(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
-    uint32_t src_id = Get_Self_Id();
-    GP_TxPacket(out,type,src_id,0x12345678,&src_id);
+    Points_reset();
 }
 
-static uint8_t __gh_reply_id(uint8_t* buff,uint8_t type,void* param)
+static uint8_t __gh_query_host(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+{
+    uint32_t list[5];
+    point_se_t data[2];
+    pointSEpull(data);
+    list[0] = Get_Self_Id();
+    list[1] = data[0].start;
+    list[2] = data[0].end;
+    list[3] = data[1].start;
+    list[4] = data[1].end;
+    GP_TxPacket(out,type,list[0],0x12345678,&list);
+}
+
+static uint8_t __gh_reply_host(uint8_t* buff,uint8_t type,void* param)
 {
     GP_Attr attr;
     attr.lenth = 5;
@@ -162,11 +170,11 @@ static uint8_t __gh_reply_id(uint8_t* buff,uint8_t type,void* param)
     buff[11] = type;
     buff[12] = 0x00;
     buff[13] = 0x00;//成功
-    memcpy(&buff[14],param,4);//拷贝本机ID
+    memcpy(&buff[14],param,5);//拷贝本机ID
     return attr.lenth;
 }
 
-static __gh_set_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+static uint8_t __gh_set_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     uint32_t id = 0;
     id = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<32;
@@ -176,24 +184,14 @@ static __gh_set_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
     LocalDataflush();
 }
 
-static __gh_sync(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+static uint8_t __gh_sync(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     //做一次立即授时
     Time_service(0,0,0);
 }
-static __gh_reply_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
-{
-    uint32_t list[4];
-    point_se_t data[2];
-    pointSEpull(data);
-    list[0] = data[0].start;
-    list[1] = data[0].end;
-    list[2] = data[1].start;
-    list[3] = data[1].end;
-    GP_TxPacket(out,type,Get_Self_Id(),0x12345678,list);
-}
 
-static uint8_t __gh_query_list(uint8_t* buff,uint8_t type,void* param)
+
+static uint8_t __gh_reply_list(uint8_t* buff,uint8_t type,void* param)
 {
     GP_Attr attr;
     attr.lenth = 17;
@@ -209,7 +207,7 @@ static uint8_t __gh_query_list(uint8_t* buff,uint8_t type,void* param)
     return attr.lenth;
 }
 
-static __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+static uint8_t __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     uint32_t id = 0;
     point_se_t data[2];
@@ -221,8 +219,25 @@ static __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
     pointSEflush();
 }
 
+static uint8_t __gh_points_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+{
+    if(buff[13] = 0x00)
+    {
+        SysControl_once(1);//关
+    }
+    else
+    {
 
-GP_map gmap[17]=
+        SysControl_once(2);//开
+    }
+}
+
+static  uint8_t __gh_mode_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+{
+//todo 切换模式
+//todo 通知云端
+}
+GP_map gmap[20]=
 {
     {0,NULL,NULL},
     {GP_SET_P_ID,NULL,NULL},
@@ -234,12 +249,16 @@ GP_map gmap[17]=
     {GP_SET_MODE_CUSTOM,__custom_mode,NULL},
     {GP_SET_MODE_SNAP,__snap_mode,NULL},
     {GP_P_STAT,__state_query,__state_prase},
+    {GP_BROADCAST_TIME,__broadcast_time,NULL},
+    {GP_RESET,__reset_all_points,NULL},
     {GH_RESET,NULL,__gh_reset},
-    {GH_QUERY_ID,__gh_reply_id,__gh_query_id},
-    {GH_SET_ID,NULL,__gh_set_id},
+    {GH_RESET_POINT,NULL,__gh_reset_points},
     {GH_SYNC,NULL,__gh_sync},
-    {GH_QUERY_LIST,__gh_reply_list,__gh_query_list},
+    {GH_QUERY_HOST,__gh_reply_host,__gh_query_host},
+    {GH_SET_ID,NULL,__gh_set_id},
     {GH_SET_LIST,NULL,__gh_set_list},
+    {GH_POINT_SWTICH,NULL,__gh_points_switch},
+    {GH_MODE_SWITCH,NULL,__gh_mode_switch},
 };
 
 uint8_t GP_TxPacket(uint8_t* buff,uint8_t type,uint32_t src, uint32_t dst,void *param)

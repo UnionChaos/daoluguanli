@@ -564,7 +564,24 @@ void vTaskCodeGps( void * pvParameters )
     }
 }
 
+uint8_t Points_reset()
+{
+    QueMsg * pMsgSend = NULL;
 
+    pMsgSend = pvPortMalloc(sizeof(QueMsg) + sizeof(gps_time));
+    pMsgSend->type = MSG_TYPE_LORA_BROADCAST_TIME;
+    pMsgSend->subtype = GP_RESET;
+    pMsgSend->src = self_id;
+    if( xQueueSend(Queue_Lora,(void *) &pMsgSend,(TickType_t)100) != pdPASS)
+    {
+    /* 发送失败，即使等待了100个时钟节拍 */
+        vPortFree(pMsgSend);
+    }
+
+
+    return 1;
+    
+}
 //CHOOSE 0 直接授时
 //CHOOSE 1 确认间隔来做授时
 //后续考虑挪至EXTI中断内来做判断
