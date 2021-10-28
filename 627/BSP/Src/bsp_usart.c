@@ -5,7 +5,7 @@
 
 extern SemaphoreHandle_t  xSemaphore_4G;
 extern SemaphoreHandle_t  xSemaphore_local;
-
+extern SemaphoreHandle_t  xSemaphore_vision;
 static UART_HandleTypeDef huart1;//FOR 4G
 static UART_HandleTypeDef huart2;//FOR 4851
 static UART_HandleTypeDef huart3;//FOR gps
@@ -107,7 +107,7 @@ static void USART_Init(void)
     HAL_UART_Init(&huart2);
     //能见度仪用被动召测的形式
     __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
-    HAL_NVIC_SetPriority(UART7_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(UART7_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(UART7_IRQn);
     
 }
@@ -160,11 +160,13 @@ void UART7_IRQHandler(void)
     if((tmp_flag != RESET) && (tmp_it_source != RESET))
     {
         rx_buf3[rx_index3++] = (uint8_t)(huart2.Instance->DR & (uint8_t)0x00FF);
-        if(rx_buf1[rx_index1-1] == '\r' )
+        if((rx_buf3[rx_index3-1] == 0x0D)&&(rx_index3>=2))
         {
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            xSemaphoreGiveFromISR(xSemaphore_local,&xHigherPriorityTaskWoken);
-        }
+            if(rx_buf3[rx_index3-2] == 0x0A)
+            {
+                    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+                    xSemaphoreGiveFromISR(xSemaphore_vision,&xHigherPriorityTaskWoken);
+            }
     }
 }
 

@@ -451,7 +451,58 @@ void vTaskVision(void * pvParameters)
         }
     }
 }
-
+///***********************************************************************************
+//*GPS信息查询
+//***********************************************************************************/
+extern     SemaphoreHandle_t  xSemaphore_vision;
+//static uint32_t notice_cnt = 0;
+//static uint32_t rmc_cnt = 0;
+void vTaskVision( void * pvParameters )
+{
+  uint8_t cnt = 0;
+  uint8_t hh_t;
+  char buf[128];
+  
+  while(1)
+  {
+        if(xSemaphoreTake( xSemaphore_vision,(TickType_t)0xffffffffUL) == pdPASS)
+        {
+            if(UART7_Rx((uint8_t *)buf,128) == 0)
+               continue;
+            if(NULL == strstr(buf,"VM"))
+            {
+                continue;
+            }
+            else
+            {
+                char *pToken = NULL;
+                char *pDelimiter = " ";
+                char  numberlist[5];
+                pToken = strtok((char *)buf,pDelimiter);
+                while(pToken)
+                {
+                    pToken = strtok(NULL,pDelimiter);
+                    switch(cnt)
+                    {
+                    case 2:
+                      if(strlen(pToken)== 5)
+                      {
+                          foggy_now  = (uint8_t)atoi(pToken);
+                      }
+                      break;
+                    default:
+                      break;
+                    }
+                    
+                    cnt++;
+                }
+                //to do rtc
+            }
+        }
+       vTaskDelay(pdMS_TO_TICKS(50));
+       cnt = 0;
+    }
+}
 ///***********************************************************************************
 //*GPS信息查询
 //***********************************************************************************/

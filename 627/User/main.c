@@ -41,6 +41,8 @@ extern void vTaskCodeGPRS( void * pvParameters );
 extern void vTaskCodeETH( void * pvParameters );     
 /*lora任务1，和终端节点通讯*/
 void vTaskLoraApp1( void * pvParameters );
+/*lora任务2，和手持仪器通讯*/
+void vTaskLoraApp2( void * pvParameters );
 /*异步处理mqtt接收到的消息线程*/
 void vTaskMqttMsg( void * pvParameters );
 
@@ -158,6 +160,8 @@ int main(void)
     assert(xSemaphore_Lora1_tx != NULL);
     xSemaphore_local = xSemaphoreCreateCounting(20,0);
     assert(xSemaphore_local != NULL);
+    xSemaphore_vision = xSemaphoreCreateCounting(20,0);
+    assert(xSemaphore_vision != NULL);
     xSemaphore_barrier_local = xSemaphoreCreateCounting(4,0);
     assert(xSemaphore_barrier_local != NULL);
 
@@ -190,10 +194,14 @@ int main(void)
     err = xTaskCreate( vTaskLoraApp1,"lora1",512,NULL,2,&xHandleLora1 );
     assert(err == pdPASS);
 
+    err = xTaskCreate( vTaskLoraApp2,"lora2",512,NULL,2,&xHandleLora1 );
+    assert(err == pdPASS);
 
     err = xTaskCreate( vTaskCodeLocal,"local",512,NULL,2,&xHandleLocal );
     assert(err == pdPASS);
 
+    err = xTaskCreate( vTaskVision,"vision",256,NULL,2,&xHandleLora1 );
+    assert(err == pdPASS);
 
     err = xTaskCreate( vTaskCodeGps,"localGps",512,NULL,2,&xHandleGps );
     assert(err == pdPASS);
