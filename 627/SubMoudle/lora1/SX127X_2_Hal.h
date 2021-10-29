@@ -3,11 +3,6 @@
 #include "stm32f4xx_hal.h"	
 #include "stdbool.h"
 
-typedef enum
-{
-    RADIO_RESET_OFF,
-    RADIO_RESET_ON,
-}tRadioResetState;
 
 //===================================SPI函数声明===================================================
 void SX127X_2_DIO0_INPUT(void);

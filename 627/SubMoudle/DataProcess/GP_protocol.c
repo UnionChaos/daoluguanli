@@ -134,15 +134,17 @@ static uint8_t __reset_all_points()
 }
 
 extern void hw_system_rest();
-static __gh_reset(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
+static uint8_t __gh_reset(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     hw_system_rest();
+    return 1;
 }
 
 extern Points_reset();
 static uint8_t __gh_reset_points(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     Points_reset();
+    return 1;
 }
 
 static uint8_t __gh_query_host(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
@@ -156,6 +158,7 @@ static uint8_t __gh_query_host(uint8_t* buff,uint8_t type,uint8_t lenth, void *o
     list[3] = data[1].start;
     list[4] = data[1].end;
     GP_TxPacket(out,type,list[0],0x12345678,&list);
+    return 1;
 }
 
 static uint8_t __gh_reply_host(uint8_t* buff,uint8_t type,void* param)
@@ -177,17 +180,19 @@ static uint8_t __gh_reply_host(uint8_t* buff,uint8_t type,void* param)
 static uint8_t __gh_set_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     uint32_t id = 0;
-    id = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<32;
+    id = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<24;
     Idpush(id);
     //Idflush();
     //初始化设置ID时候，顺便将默认参数配置进去
     LocalDataflush();
+    return 1;
 }
 
 static uint8_t __gh_sync(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     //做一次立即授时
     Time_service(0,0,0);
+    return 1;
 }
 
 
@@ -211,12 +216,13 @@ static uint8_t __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out
 {
     uint32_t id = 0;
     point_se_t data[2];
-    data[0].start = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<32;
-    data[0].end = buff[17]|buff[18]<<8|buff[19]<<16|buff[20]<<32;
-    data[1].start = buff[21]|buff[22]<<8|buff[23]<<16|buff[24]<<32;
-    data[1].end = buff[25]|buff[26]<<8|buff[27]<<16|buff[28]<<32;
+    data[0].start = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<24;
+    data[0].end = buff[17]|buff[18]<<8|buff[19]<<16|buff[20]<<24;
+    data[1].start = buff[21]|buff[22]<<8|buff[23]<<16|buff[24]<<24;
+    data[1].end = buff[25]|buff[26]<<8|buff[27]<<16|buff[28]<<24;
     pointSEpush(data);
     pointSEflush();
+    return 1;
 }
 
 static uint8_t __gh_points_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
@@ -227,15 +233,16 @@ static uint8_t __gh_points_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void
     }
     else
     {
-
         SysControl_once(2);//开
     }
+    return 1;
 }
 
 static  uint8_t __gh_mode_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
 //todo 切换模式
 //todo 通知云端
+    return 1;
 }
 GP_map gmap[20]=
 {

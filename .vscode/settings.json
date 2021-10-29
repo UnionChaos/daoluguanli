@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "string.h": "c",
-        "gp_protocol.h": "c"
+        "gp_protocol.h": "c",
+        "sx127x_hal.h": "c",
+        "bsp_usart.h": "c"
     }
 }

@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --backend -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.1\common\bin\cspybat" -f "H:\project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --backend -f "H:\project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
 }
 else
 {
-& "D:\IAR for ARM 8.30\common\bin\cspybat" -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --debug_file=$debugfile --backend -f "F:\Project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.1\common\bin\cspybat" -f "H:\project\daoluguanli\627\Project\settings\IceWarn.Debug.general.xcl" --debug_file=$debugfile --backend -f "H:\project\daoluguanli\627\Project\settings\IceWarn.Debug.driver.xcl" 
 }

@@ -409,50 +409,9 @@ double Get_Gps_at(void)
 }
 
 
+
 ///***********************************************************************************
 //*能见度仪信息查询
-//***********************************************************************************/
-extern SemaphoreHandle_t  xSemaphore_vision;
-void vTaskVision(void * pvParameters)
-{
-    uint8_t cnt = 0;
-    char buf[128];
-    //如果不是字符串 补成字符串，用于拆解
-    //也可以用固定方案 把字符换算成结果类似 4*1000+3*100....，不利于拓展
-    while(1)
-    {
-        if(xSemaphoreTake( xSemaphore_vision,(TickType_t)0xffffffffUL) == pdPASS)
-        {
-            if(UART8_Rx((uint8_t *)buf,128) == 0)
-               continue;
-            if(NULL != strstr(buf,"RMC"))
-               continue;
-                
-            char *pToken = NULL;
-            char *pDelimiter = " ";
-            char temp_foggy[6];
-
-            pToken = strtok((char *)buf,pDelimiter);
-            while(pToken)
-            {
-                pToken = strtok(NULL,pDelimiter);
-                switch(cnt)
-                {
-                case 4:
-                    memcpy(temp_foggy,pToken,5);
-                    temp_foggy[5] = '\0';
-                    foggy_now =atoi(temp_foggy);
-                default:
-                    break;
-                }
-                cnt++;
-            }
-
-        }
-    }
-}
-///***********************************************************************************
-//*GPS信息查询
 //***********************************************************************************/
 extern     SemaphoreHandle_t  xSemaphore_vision;
 //static uint32_t notice_cnt = 0;
@@ -628,10 +587,7 @@ uint8_t Points_reset()
     /* 发送失败，即使等待了100个时钟节拍 */
         vPortFree(pMsgSend);
     }
-
-
     return 1;
-    
 }
 //CHOOSE 0 直接授时
 //CHOOSE 1 确认间隔来做授时

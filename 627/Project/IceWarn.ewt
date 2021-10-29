@@ -2888,6 +2888,15 @@
         <group>
             <name>LORA</name>
             <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Driver.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Hal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Hal.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\SubMoudle\Lora\SX127X_Driver.c</name>
             </file>
             <file>

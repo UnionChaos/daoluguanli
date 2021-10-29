@@ -367,6 +367,7 @@
                     <state>$PROJ_DIR$\..\SubMoudle\localData</state>
                     <state>$PROJ_DIR$\..\SubMoudle\rx8010</state>
                     <state>$PROJ_DIR$\..\SubMoudle\Lora</state>
+                    <state>$PROJ_DIR$\..\SubMoudle\lora1</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2602,6 +2603,15 @@
         </group>
         <group>
             <name>LORA</name>
+            <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Driver.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Hal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\SubMoudle\lora1\SX127X_2_Hal.h</name>
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\SubMoudle\Lora\SX127X_Driver.c</name>
             </file>

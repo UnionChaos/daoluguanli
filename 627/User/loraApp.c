@@ -3,6 +3,7 @@
 #include "DataApp.h"
 #include "SX127X_Hal.h"
 #include "SX127X_Driver.h"
+#include "SX127X_2_Hal.h"
 #include "MsgProc.h"
 
 #include "GP_protocol.h"

@@ -290,7 +290,7 @@ uint16_t UART4_Rx(uint8_t* buf,uint16_t len)
     return ret;
 }
 
-void UART7_Rx(uint8_t* buf,uint16_t size)
+uint16_t UART7_Rx(uint8_t* buf,uint16_t size)
 {
     uint16_t ret = 0;
     if(rx_index3 <= size)
@@ -302,8 +302,8 @@ void UART7_Rx(uint8_t* buf,uint16_t size)
     else
     {
         memcpy(buf,rx_buf3,size);
-        ret = len;
-        rx_index3 -= len;
+        ret = size;
+        rx_index3 -= size;
         memcpy(rx_buf3,rx_buf3 + size,rx_index3);
     }
     return ret;
@@ -344,7 +344,7 @@ void UART8_ClearBuf(void)
 void UART7_ClearBuf(void)
 {
     memset(rx_buf3,0,sizeof(rx_buf3));
-    rx_index2 = 0;
+    rx_index3 = 0;
 }
 
 void UART4_Tx(uint8_t* buf,uint16_t size)
@@ -360,8 +360,7 @@ void UART7_Tx(uint8_t* buf,uint16_t size)
 
 void UART8_Tx(uint8_t* buf,uint16_t size)
 {
-    uint8_t ret = 0;
-    ret = HAL_UART_Transmit(&huart3, buf, size, 1000/*(size + 9)/10*/);
+    HAL_UART_Transmit(&huart3, buf, size, 1000/*(size + 9)/10*/);
 }
 
 
