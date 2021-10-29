@@ -14,6 +14,7 @@
 #include "task.h"
 #include "EEPROM.h"
 #include "crc.h"
+
 //授时 GPS间隔
 #define GPSINTER                 3600*3
 //轮询时间点(小时)
@@ -392,7 +393,7 @@ void LocalDataflush()
     EEPROM_Write(E2_STRATEGY_ADDR,&strategy,sizeof(Strategy_t));
     EEPROM_Write(E2_LOCAL_ADDR,&localInfo,sizeof(local_info_t));
     EEPROM_Write(E2_MODE_NOW_ADDR,&point_mode,sizeof(uint8_t));
-    EEPROM_Read(E2_ID_ADDR,&self_id,sizeof(uint32_t));
+    EEPROM_Write(E2_ID_ADDR,&self_id,sizeof(uint32_t));
 }
 
 ///***********************************************************************************
@@ -410,16 +411,15 @@ double Get_Gps_at(void)
 
 
 
-///***********************************************************************************
-//*能见度仪信息查询
+///***********************************************************************************/
+//能见度仪信息查询
 //***********************************************************************************/
 extern     SemaphoreHandle_t  xSemaphore_vision;
 //static uint32_t notice_cnt = 0;
 //static uint32_t rmc_cnt = 0;
-void vTaskVision( void * pvParameters )
+void vTaskVision( void * pvParameters)
 {
   uint8_t cnt = 0;
-  uint8_t hh_t;
   char buf[128];
   
   while(1)
@@ -436,7 +436,6 @@ void vTaskVision( void * pvParameters )
             {
                 char *pToken = NULL;
                 char *pDelimiter = " ";
-                char  numberlist[5];
                 pToken = strtok((char *)buf,pDelimiter);
                 while(pToken)
                 {
@@ -891,7 +890,6 @@ void ModReport()
 
 void SysControl_once(uint8_t on)
 {
-    int i = 0;
     QueMsg * pMsgSend = NULL;
 
     pMsgSend = pvPortMalloc(sizeof(QueMsg)+1);

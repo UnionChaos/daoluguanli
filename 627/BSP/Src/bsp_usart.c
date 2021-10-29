@@ -164,36 +164,27 @@ void UART7_IRQHandler(void)
         {
             if(rx_buf3[rx_index3-2] == 0x0A)
             {
-                    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-                    xSemaphoreGiveFromISR(xSemaphore_vision,&xHigherPriorityTaskWoken);
+                BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+                xSemaphoreGiveFromISR(xSemaphore_vision,&xHigherPriorityTaskWoken);
             }
+        }
     }
 }
 
 void UART8_IRQHandler(void)
 {
-    //taskENTER_CRITICAL();
     uint32_t tmp_flag = 0, tmp_it_source = 0;
-        tmp_flag = __HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE);
+    tmp_flag = __HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE);
 	tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart3, UART_IT_RXNE);
     if((tmp_flag != RESET) && (tmp_it_source != RESET))
     {
-        //__HAL_TIM_SET_COUNTER(&htim3, 0);
-        //if(rx_index1 == 0) //第一次接受数据，则打开定时器
-           // HAL_TIM_Base_Start_IT(&htim3);
         rx_buf1[rx_index1++] = (uint8_t)(huart3.Instance->DR & (uint8_t)0x00FF);
         if(rx_buf1[rx_index1-1] == 0x0A )
         {
-                        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-                        xSemaphoreGiveFromISR(xSemaphore_local,&xHigherPriorityTaskWoken);
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xSemaphoreGiveFromISR(xSemaphore_local,&xHigherPriorityTaskWoken);
         }
-        /*if(rx_index1 >= sizeof(rx_buf1))
-        {
-            rx_index1 = 0;
-            HAL_TIM_Base_Stop_IT(&htim3);
-        }*/
     }
-    //taskEXIT_CRITICAL();
 }
 
 
@@ -362,5 +353,3 @@ void UART8_Tx(uint8_t* buf,uint16_t size)
 {
     HAL_UART_Transmit(&huart3, buf, size, 1000/*(size + 9)/10*/);
 }
-
-

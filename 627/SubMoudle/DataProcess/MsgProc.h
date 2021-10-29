@@ -9,7 +9,8 @@
 #ifndef __MsgProc_H__
 #define __MsgProc_H__
 #include <stdint.h>
-#include "GP_protocol.h"
+//#include "GP_protocol.h"
+
 
 typedef enum MsgType
 {

@@ -1,5 +1,4 @@
-/**
-  ******************************************************************************
+/********************************************************************************
   * @file    stm32f4xx_hal.h
   * @author  MCD Application Team
   * @brief   This file contains all the functions prototypes for the HAL 

@@ -95,6 +95,8 @@ TaskHandle_t xHandleGprs;
 TaskHandle_t xEnternetHandle;
 TaskHandle_t xHandleMqttMsg;
 TaskHandle_t xHandleLora1;
+TaskHandle_t xHandleLora2;
+TaskHandle_t xHandleVision;
 TaskHandle_t xHandleLocal;
 TaskHandle_t xHandleGps;
 #ifdef CJY_DEBUG
@@ -194,13 +196,13 @@ int main(void)
     err = xTaskCreate( vTaskLoraApp1,"lora1",512,NULL,2,&xHandleLora1 );
     assert(err == pdPASS);
 
-    err = xTaskCreate( vTaskLoraApp2,"lora2",512,NULL,2,&xHandleLora1 );
+    err = xTaskCreate( vTaskLoraApp2,"lora2",512,NULL,2,&xHandleLora2 );
     assert(err == pdPASS);
 
     err = xTaskCreate( vTaskCodeLocal,"local",512,NULL,2,&xHandleLocal );
     assert(err == pdPASS);
 
-    err = xTaskCreate( vTaskVision,"vision",256,NULL,2,&xHandleLora1 );
+    err = xTaskCreate( vTaskVision,"vision",256,NULL,2,&xHandleVision );
     assert(err == pdPASS);
 
     err = xTaskCreate( vTaskCodeGps,"localGps",512,NULL,2,&xHandleGps );

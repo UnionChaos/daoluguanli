@@ -8,7 +8,6 @@
 
 
 static uint8_t eth_buf[256] = {0};
-static uint8_t eth_len = 0;
 static void messageArrived(MessageData* data)
 {
 //	printf("%.*s: %.*s\n", data->topicName->lenstring.len, data->topicName->lenstring.data,
@@ -16,8 +15,6 @@ static void messageArrived(MessageData* data)
     //前六个字节 01 06 97 EC 00 00
     uint8_t* pdate = (uint8_t*)data->message->payload;
     memcpy(eth_buf,pdate,data->message->payloadlen);
-    eth_len = data->message->payloadlen;
-
 }
 
 /*DHCP所需要的缓冲区和IP缓存*/

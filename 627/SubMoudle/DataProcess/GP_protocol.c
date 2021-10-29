@@ -128,7 +128,7 @@ static uint8_t __broadcast_time(uint8_t* buff,uint8_t type,void* param)
     memcpy(&buff[13],param,sizeof(gps_time));
     return attr.lenth;
 }
-static uint8_t __reset_all_points()
+static uint8_t __reset_all_points(uint8_t* buff,uint8_t type,void* param)
 {
     return 0;
 }
@@ -140,7 +140,7 @@ static uint8_t __gh_reset(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
     return 1;
 }
 
-extern Points_reset();
+extern int Points_reset(void);
 static uint8_t __gh_reset_points(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     Points_reset();
@@ -177,14 +177,15 @@ static uint8_t __gh_reply_host(uint8_t* buff,uint8_t type,void* param)
     return attr.lenth;
 }
 
+extern void Idflush();
 static uint8_t __gh_set_id(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
     uint32_t id = 0;
     id = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<24;
     Idpush(id);
-    //Idflush();
+    Idflush();
     //初始化设置ID时候，顺便将默认参数配置进去
-    LocalDataflush();
+    //LocalDataflush();
     return 1;
 }
 
@@ -196,25 +197,8 @@ static uint8_t __gh_sync(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 }
 
 
-static uint8_t __gh_reply_list(uint8_t* buff,uint8_t type,void* param)
-{
-    GP_Attr attr;
-    attr.lenth = 17;
-    attr.encrypt = 0;
-    attr.trans = 3;
-    attr.sep = 0;
-    attr.res = 0;
-    memcpy(&buff[9],&attr,2);
-    buff[11] = type;
-    buff[12] = 0x00;
-    buff[13] = 0x00;//成功
-    memcpy(&buff[14],param,16);//拷贝list
-    return attr.lenth;
-}
-
 static uint8_t __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
-    uint32_t id = 0;
     point_se_t data[2];
     data[0].start = buff[13]|buff[14]<<8|buff[15]<<16|buff[16]<<24;
     data[0].end = buff[17]|buff[18]<<8|buff[19]<<16|buff[20]<<24;
@@ -227,7 +211,7 @@ static uint8_t __gh_set_list(uint8_t* buff,uint8_t type,uint8_t lenth, void *out
 
 static uint8_t __gh_points_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
-    if(buff[13] = 0x00)
+    if(buff[13] == 0x00)
     {
         SysControl_once(1);//关
     }

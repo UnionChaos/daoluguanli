@@ -1,5 +1,6 @@
 #include "DataPub.h"
 #include <assert.h>
+#include <string.h>
 #include "DataApp.h"
 #include "SX127X_Hal.h"
 #include "SX127X_Driver.h"
@@ -197,7 +198,6 @@ void vTaskLoraApp1( void * pvParameters )
     BaseType_t xResult;
     uint8_t lenth = 0;
     QueMsg * pMsg = NULL;
-    QueMsg * pMsgSend = NULL;
     point_state pstate;
     uint8_t RxBuffer[256];
     uint8_t TxBuffer[64];
@@ -279,11 +279,9 @@ void vTaskLoraApp1( void * pvParameters )
 void vTaskLoraApp2( void * pvParameters )
 {
     (void)pvParameters;
-    BaseType_t xResult;
     uint8_t lenth = 0;
     uint8_t RxBuffer[256];
     uint8_t TxBuffer[64];
-    uin32_t Txsrc,Txdst;
 
     uint8_t ret;
     SX127X_2_Lora_init();
@@ -299,12 +297,12 @@ void vTaskLoraApp2( void * pvParameters )
             uint32_t dst = RxBuffer[5]|RxBuffer[6]<<8|RxBuffer[7]<<16|RxBuffer[8]<<24;
             if(dst == Get_Self_Id()|| dst == 0xffffffff)
             {
-                ret = GP_RxPacket(RxBuffer,RxBuffer[11],TxBuffer);
+                ret = GP_RxPacket(RxBuffer,RxBuffer[11],lenth,TxBuffer);
                 if(ret == 0)
                     continue;
                 if(TxBuffer[0] != 0)
                 {
-                    Lora_2_Send(TxBuffer,ret,3,2000);
+                    Lora2_Send(TxBuffer,ret,3,2000);
                     SX127X_2_StartRx();
                 }
             }
