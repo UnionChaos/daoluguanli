@@ -5,9 +5,10 @@
 #include "DataApp.h"
 typedef enum MODE_TYPE
 {
-    MODE_AUTO_0 = 1,
+    MODE_AUTO_0 = 0,
     MODE_AUTO_1,
     MODE_AUTO_2,
+    MODE_AUTO_3,
     MODE_CFG,
     MODE_RF,
 }MODE_TYPE;

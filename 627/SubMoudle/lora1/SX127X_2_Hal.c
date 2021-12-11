@@ -13,11 +13,11 @@
   *SPI：本例程使用STM32L4的SPI5进行与SX127X_2模块通信。
   *GPIO口：本例程使用的GPIO口详情如下：
   *        PE3  ---> DIO0
-  *        PF4 ---> DIO1
+  *        PC13 ---> DIO1
   *        无  ---> DIO2
   *        PB0  ---> TXE
   *        PC5  ---> RXE
-	*        PF5  ---> RST
+	*        PF0  ---> RST
 	*        PE4 ---> NSS
   *        PE6  ---> M0SI
   *        PE5  ---> MISO
@@ -86,11 +86,11 @@ GPIO_PinState SX127X_2_DIO0_GetState()
 void SX127X_2_DIO1_INPUT()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
-    GPIO_InitStruct.Pin = GPIO_PIN_4;
+    GPIO_InitStruct.Pin = GPIO_PIN_13;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
     //HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
 }
 /**
@@ -166,7 +166,7 @@ void SX127X_2_RESET_OUTPUT(GPIO_PinState PinState)
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
-    HAL_GPIO_WritePin(GPIOF, GPIO_PIN_5, PinState);
+    HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0, PinState);
 }
 
 //-----------------------------SPI-----------------------------//
@@ -215,7 +215,7 @@ void SX127X_2_SPIGPIO_Init()
   */
 void SX127X_2_SPI_Init()
 {
-    __HAL_RCC_SPI5_CLK_ENABLE();//SPI2时钟使能
+    __HAL_RCC_SPI4_CLK_ENABLE();//SPI4时钟使能
     SX127X_2_SPIGPIO_Init();
 
     SPI4_InitStruct.Instance = SPI4; //使用SPI4

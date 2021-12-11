@@ -217,7 +217,7 @@ void vTaskLoraApp1( void * pvParameters )
 
         if(xResult == (BaseType_t)1)
         {
-            if(pMsg->subtype > 10)
+            if(pMsg->subtype > 11)
             {
 #ifdef CJY_DEBUG
                 printf("subtype failed %d\n",pMsg->subtype);
@@ -291,6 +291,7 @@ void vTaskLoraApp2( void * pvParameters )
     while(1)
     {
         memset(TxBuffer,0,64);
+        SX127X_2_StartRx();
         if(xSemaphoreTake( xSemaphore_Lora2_rx,(TickType_t)0xffffffffUL) == pdPASS)
         {  
             lenth = SX127X_2_RxPacket_cjy(RxBuffer);
@@ -302,6 +303,7 @@ void vTaskLoraApp2( void * pvParameters )
                     continue;
                 if(TxBuffer[0] != 0)
                 {
+                    HAL_Delay(50U);
                     Lora2_Send(TxBuffer,ret,3,2000);
                     SX127X_2_StartRx();
                 }

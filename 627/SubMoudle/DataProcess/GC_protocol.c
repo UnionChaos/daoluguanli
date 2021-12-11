@@ -10,6 +10,7 @@ uint32_t pstate_sn_tmp;
 uint32_t rf_sn_tmp;
 extern uint8_t NodeUpdate;
 extern uint8_t RfUpdate;
+extern uint32_t foggy_now;
 void *pvPortMalloc( size_t xWantedSize );
 void vPortFree( void *pv );
 
@@ -37,7 +38,7 @@ static void __gate_state(uint8_t* obuff,uint8_t *ibuff, uint16_t* osize,QueMsg *
     gc_msg.GwState.at = Get_Gps_at();
     gc_msg.GwState.vol = Get_Gw_Vol();
     gc_msg.GwState.devid = gc_msg.id;
-
+    gc_msg.GwState.vision = foggy_now;
     cJSON *json = cJSON_CreateObject();   
     jsonb_opt_GC_msg_t(JSONB_OPT_S2J,json,&gc_msg,sizeof(GC_msg_t));
     cJSON_PrintPreallocated(json, (char *)obuff, 1024, 0);
@@ -276,9 +277,7 @@ static void __unpk(void** obuff,uint8_t *ibuff,QueMsg *msg)
             auto_mode *atmode = (auto_mode*)pMsgSend->data;
             //gc2gs
             atmode->mode_num = gc_msg.Mode.mode;
-            pMsgSend->subtype = GP_SET_MODE_AUTO;
-
-            
+            pMsgSend->subtype = GP_SET_MODE_AUTO;    
         }
         else
         {

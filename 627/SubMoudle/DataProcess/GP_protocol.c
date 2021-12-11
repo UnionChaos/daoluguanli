@@ -130,12 +130,22 @@ static uint8_t __broadcast_time(uint8_t* buff,uint8_t type,void* param)
 }
 static uint8_t __reset_all_points(uint8_t* buff,uint8_t type,void* param)
 {
-    return 0;
+    GP_Attr attr;
+    attr.lenth = 0;
+    attr.encrypt = 0;
+    attr.trans = 3;
+    attr.sep = 0;
+    attr.res = 0;
+    memcpy(&buff[9],&attr,2);
+    buff[11] = type;
+    buff[12] = 0x00;
+    return attr.lenth;
 }
 
 extern void hw_system_rest();
 static uint8_t __gh_reset(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
 {
+    //printf("fuck!\n");
     hw_system_rest();
     return 1;
 }
@@ -157,23 +167,22 @@ static uint8_t __gh_query_host(uint8_t* buff,uint8_t type,uint8_t lenth, void *o
     list[2] = data[0].end;
     list[3] = data[1].start;
     list[4] = data[1].end;
-    GP_TxPacket(out,type,list[0],0x12345678,&list);
-    return 1;
+    return GP_TxPacket(out,type,list[0],0x12345678,&list);
 }
 
 static uint8_t __gh_reply_host(uint8_t* buff,uint8_t type,void* param)
 {
     GP_Attr attr;
-    attr.lenth = 5;
+    attr.lenth = 21;
     attr.encrypt = 0;
     attr.trans = 3;
     attr.sep = 0;
     attr.res = 0;
     memcpy(&buff[9],&attr,2);
-    buff[11] = type;
+    buff[11] = type|0x80;
     buff[12] = 0x00;
     buff[13] = 0x00;//成功
-    memcpy(&buff[14],param,5);//拷贝本机ID
+    memcpy(&buff[14],param,20);//拷贝本机ID
     return attr.lenth;
 }
 
@@ -221,10 +230,13 @@ static uint8_t __gh_points_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void
     }
     return 1;
 }
-
+extern uint8_t Points_auto_mode_change(uint8_t mode);
 static  uint8_t __gh_mode_switch(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
-{
 //todo 切换模式
+{
+    ModeChange(buff[13]);
+    NowModeflush();
+    Points_auto_mode_change(buff[13]);
 //todo 通知云端
     return 1;
 }
@@ -265,11 +277,11 @@ uint8_t GP_TxPacket(uint8_t* buff,uint8_t type,uint32_t src, uint32_t dst,void *
     buff[6] = dst>>8;
     buff[7] = dst>>16;
     buff[8] = dst>>24;  
-    for(i = 0; i<17; i++)
+    for(i = 0; i<20; i++)
     {
         if(type == gmap[i].type)
         {
-            lenth = gmap[type].packet(buff,type,param);
+            lenth = gmap[i].packet(buff,type,param);
             break;
         }
     }
@@ -287,11 +299,11 @@ uint8_t GP_RxPacket(uint8_t* buff,uint8_t type,uint8_t lenth, void *out)
         buff[lenth-1] == 0x16 &&
         buff[lenth-2] == crc)
     {
-        for(i = 0; i<17; i++)
+        for(i = 0; i<20; i++)
         {
             if(type == gmap[i].type)
             {
-                ret = gmap[type].unpacket(buff,type,lenth,out);
+                ret = gmap[i].unpacket(buff,type,lenth,out);
                 return ret;
             }
         }

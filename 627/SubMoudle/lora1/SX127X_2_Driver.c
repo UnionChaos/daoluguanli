@@ -28,7 +28,7 @@ float G_TsXms_2 = 1.024;//1.024ms
   * @返回值：无
   */
 S_LoRaConfig G_LoRaConfig_2 = {
-    433000000,
+    470000000,
     BW500KHZ,
     SF08,
     CR_4_5,

@@ -34,8 +34,8 @@ void  BSP_Init (void)
     BSP_PWR_CLK_Init();
     BSP_SIM7600_PWR_SET(1);
     RF1_PWR_SET(1);
-    //RF2_PWR_SET(1);
-    //RS485_PWR_SET(1);
+    RF2_PWR_SET(1);
+    RS485_PWR_SET(1);
     NET_PWR_SET(1);
     GPS_PWR_SET(1);
     BSP_RELAY_Init();

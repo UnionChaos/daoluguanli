@@ -96,7 +96,7 @@ void vTaskCodeGPRS( void * pvParameters )
             break;          
     }
 #ifdef CJY_DEBUG
-    printf("gprs connect success! ip = %s , port = 1883\n",address);
+    printf("gprs connect success! ip = %s , port = 36013\n",address);
 #endif
 
 #if defined(MQTT_TASK)

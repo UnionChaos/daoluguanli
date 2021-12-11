@@ -63,6 +63,7 @@ static void USART_Init(void)
     PE0     ------> UART8_TX
     PE1     ------> UART8_RX 
     */
+
     GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -83,7 +84,7 @@ static void USART_Init(void)
     __HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE);
     HAL_NVIC_SetPriority(UART8_IRQn, 6, 0);
 
-
+        __HAL_RCC_UART7_CLK_ENABLE();
 
     /**USART7 GPIO Configuration    
     PE8     ------> UART7_RX
@@ -94,7 +95,7 @@ static void USART_Init(void)
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF8_UART7;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
         
     huart2.Instance = UART7;
     huart2.Init.BaudRate = 9600;
@@ -155,14 +156,16 @@ void BSP_USART_Init(void)
 void UART7_IRQHandler(void)
 {
     uint32_t tmp_flag = 0, tmp_it_source = 0;
-    tmp_flag = __HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE);
-	tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart3, UART_IT_RXNE);
+    tmp_flag = __HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE);
+	tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_RXNE);
     if((tmp_flag != RESET) && (tmp_it_source != RESET))
     {
+        if((uint8_t)(huart2.Instance->DR & (uint8_t)0x00FF) == 'V')
+            rx_index3 = 0;
         rx_buf3[rx_index3++] = (uint8_t)(huart2.Instance->DR & (uint8_t)0x00FF);
-        if((rx_buf3[rx_index3-1] == 0x0D)&&(rx_index3>=2))
+        if(rx_index3>=2)
         {
-            if(rx_buf3[rx_index3-2] == 0x0A)
+            if((rx_buf3[rx_index3-2] == 0x0D) && (rx_buf3[rx_index3-1] == 0x0A))
             {
                 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
                 xSemaphoreGiveFromISR(xSemaphore_vision,&xHigherPriorityTaskWoken);

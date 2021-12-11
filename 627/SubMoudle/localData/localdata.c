@@ -18,7 +18,7 @@
 //授时 GPS间隔
 #define GPSINTER                 3600*3
 //轮询时间点(小时)
-#define POLLITIME                11
+#define POLLITIME                20
 #define CHO_RESP                 1
 #define CHO_REPORT               2
 #define E2_CONFIG_ADDR           0
@@ -445,7 +445,7 @@ void vTaskVision( void * pvParameters)
                     case 2:
                       if(strlen(pToken)== 5)
                       {
-                          foggy_now  = (uint8_t)atoi(pToken);
+                          foggy_now  = (uint16_t)atoi(pToken);
                       }
                       break;
                     default:
@@ -572,7 +572,24 @@ void vTaskCodeGps( void * pvParameters )
        cnt = 0;
     }
 }
+uint8_t Points_auto_mode_change(uint8_t mode)
+{
+    QueMsg * pMsgSend = NULL;
+    pMsgSend = pvPortMalloc(sizeof(QueMsg)+sizeof(auto_mode));
+    auto_mode *atmode = (auto_mode*)pMsgSend->data;
+    //gc2gs
+    atmode->mode_num = mode;
+    pMsgSend->subtype = GP_SET_MODE_AUTO;    
 
+    pMsgSend->type = MSG_TYPE_LORA_STATE_QUERY_CONTROL;
+    pMsgSend->src = self_id;
+    if( xQueueSend(Queue_Lora,(void *) &pMsgSend,(TickType_t)100) != pdPASS)
+    {
+    /* 发送失败，即使等待了100个时钟节拍 */
+        vPortFree(pMsgSend);
+    }
+    return 1;
+}
 uint8_t Points_reset()
 {
     QueMsg * pMsgSend = NULL;
@@ -990,7 +1007,7 @@ void localInfoInit()
     {
         pointsInfo.p_state[i].id = i+1;
     }*/
-        memset(&localInfo,0,sizeof(local_info_t));
+    //memset(&localInfo,0,sizeof(local_info_t));
 }
 
 void vTaskCodeLocal( void * pvParameters )
@@ -1091,7 +1108,8 @@ void vTaskCodeLocal( void * pvParameters )
         //定时轮询节点状态 每天白天中午12点01分
         if((gps_info.hour == POLLITIME)&&(localInfo.doneflag == 0))
         {    
-            if(gprs_is_online())
+            //if(gprs_is_online())
+            if(1)
             {
                 PointStatePoll();
                 //PointStateReport();

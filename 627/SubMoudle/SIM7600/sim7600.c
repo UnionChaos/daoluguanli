@@ -246,7 +246,7 @@ uint8_t Gsm_Connect_Server(uint8_t *ip ,uint32_t port)
 	printf("AT+CIPMODE=0\n");	
 #endif		
 	
-    if(Gsm_Stask_Spoint((uint8_t *)"ctnet"))
+    if(Gsm_Stask_Spoint((uint8_t *)"cmnet"))
 	{
 	    return CONNECT_ERR_CSTT;
 	} 

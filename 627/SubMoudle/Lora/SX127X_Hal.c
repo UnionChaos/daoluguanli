@@ -47,7 +47,7 @@ void SX127X_DIO0_INPUT()
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
-    HAL_NVIC_SetPriority(EXTI3_IRQn, 6, 0);
+    HAL_NVIC_SetPriority(EXTI3_IRQn, 5, 0);
 }
 /**
   * @简介：该函数为DIO0输入中断开启使能；
