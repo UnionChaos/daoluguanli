@@ -16,7 +16,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
     <DebugChecksum>
-        <Checksum>999972430</Checksum>
+        <Checksum>187557161</Checksum>
     </DebugChecksum>
     <CodeCoverage>
         <Enabled>_ 0</Enabled>
@@ -68,6 +68,7 @@
     </array_types>
     <watch_formats>
         <Fmt0>{W}42:self_id	4	0</Fmt0>
+        <Fmt1>{W}42:self_test	4	0</Fmt1>
     </watch_formats>
     <Trace1>
         <Enabled>0</Enabled>
@@ -161,7 +162,7 @@
         <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.647.11" 0 0 1 "" 0 "" 0</Bp0>
         <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.664.11" 0 0 1 "" 0 "" 0</Bp1>
         <Bp2>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Lib\Src\stm32f4xx_hal_uart.c}.672.7" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\SubMoudle\localData\localdata.c}.1114.17" 0 0 1 "" 0 "" 0</Bp3>
+        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\SubMoudle\localData\localdata.c}.1120.17" 0 0 1 "" 0 "" 0</Bp3>
         <Count>4</Count>
     </Breakpoints2>
     <Aliases>

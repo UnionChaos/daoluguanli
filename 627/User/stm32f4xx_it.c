@@ -72,6 +72,12 @@ void EXTI3_IRQHandler(void)
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
     HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 }
+void EXTI4_IRQHandler(void)
+{
+    HAL_NVIC_DisableIRQ(EXTI4_IRQn);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+    HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+}
 
 
 /******************************************************************************/

@@ -42,12 +42,12 @@ SPI_HandleTypeDef SPI2_InitStruct;
 void SX127X_DIO0_INPUT()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
-    GPIO_InitStruct.Pin = GPIO_PIN_3;
+    GPIO_InitStruct.Pin = GPIO_PIN_4;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
-    HAL_NVIC_SetPriority(EXTI3_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(EXTI4_IRQn, 5, 0);
 }
 /**
   * @简介：该函数为DIO0输入中断开启使能；
@@ -56,7 +56,7 @@ void SX127X_DIO0_INPUT()
   */
 void SX127X_DIO0_INTENABLE()
 {
-    HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+    HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 }
 /**
   * @简介：该函数为DIO0输入中断关闭使能；
@@ -65,7 +65,7 @@ void SX127X_DIO0_INTENABLE()
   */
 void SX127X_DIO0_INTDISABLE()
 {
-    HAL_NVIC_DisableIRQ(EXTI3_IRQn);
+    HAL_NVIC_DisableIRQ(EXTI4_IRQn);
 }
 /**
   * @简介：该函数为DIO0输入状态获取；
@@ -75,7 +75,7 @@ void SX127X_DIO0_INTDISABLE()
 GPIO_PinState SX127X_DIO0_GetState()
 {
     GPIO_PinState State;
-    State = HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_3);
+    State = HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_4);
     return State;
 }
 /**
@@ -85,12 +85,12 @@ GPIO_PinState SX127X_DIO0_GetState()
   */
 void SX127X_DIO1_INPUT()
 {
-    GPIO_InitTypeDef GPIO_InitStruct;
+    /*GPIO_InitTypeDef GPIO_InitStruct;
     GPIO_InitStruct.Pin = GPIO_PIN_4;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);*/
     //HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
 }
 /**

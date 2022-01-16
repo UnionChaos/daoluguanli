@@ -18,7 +18,7 @@
 //授时 GPS间隔
 #define GPSINTER                 3600*3
 //轮询时间点(小时)
-#define POLLITIME                20
+#define POLLITIME                11
 #define CHO_RESP                 1
 #define CHO_REPORT               2
 #define E2_CONFIG_ADDR           0
@@ -27,7 +27,8 @@
 #define E2_STRATEGY_ADDR         576
 #define E2_LOCAL_ADDR            640
 #define E2_MODE_NOW_ADDR         672
-#define E2_ID_ADDR               704
+#define E2_ID_ADDR               768
+//#define E2_ID_ADDR               704
 
 #define SYS_ON                   2
 #define SYS_OFF                  1
@@ -1008,6 +1009,11 @@ void localInfoInit()
         pointsInfo.p_state[i].id = i+1;
     }*/
     //memset(&localInfo,0,sizeof(local_info_t));
+    localInfo.isday = 0;
+    localInfo.doneflag = 0;
+    localInfo.syson = 0;
+    localInfo.syson_cloud = 0;
+    localInfo.last_update = 0;
 }
 
 void vTaskCodeLocal( void * pvParameters )
@@ -1025,6 +1031,9 @@ void vTaskCodeLocal( void * pvParameters )
     localInfo.se[1].end = 420; */
     //self_id = 0x80000002; 
     //LocalDataflush();
+    /*Idpush(0x80000001);
+
+    Idflush();*/
     LocalDataPull();
     //最好等待MQTT初始化完成
     /*while(1)
@@ -1179,7 +1188,7 @@ void vTaskCodeLocal( void * pvParameters )
 
 
         
-        if(gps_info.hour == 24)
+        if(gps_info.hour == 23)
         {
             localInfo.doneflag = 0;
         }

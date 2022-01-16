@@ -4,6 +4,8 @@
         "gp_protocol.h": "c",
         "sx127x_hal.h": "c",
         "bsp_usart.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "includes.h": "c",
+        "stm32f4xx_hal.h": "c"
     }
 }
